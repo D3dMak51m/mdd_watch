@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'core/constants/app_constants.dart';
-import 'core/di/injection.dart';
-import 'presentation/screens/splash_screen.dart'; // Создадим позже
+import 'package:flutter/services.dart';
+import 'core/di/injection.dart'; // Создадим позже
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Init Hive
-  await Hive.initFlutter();
-  await Hive.openBox(AppConstants.settingsBox);
-  await Hive.openBox(AppConstants.appBox);
+  // Часы обычно имеют маленькие экраны, фиксируем ориентацию
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Init DI
-  await configureDependencies();
+  // Инициализация DI (пока закомментировано, так как файл еще не создан)
+  // await configureDependencies();
 
   runApp(const MddWatchApp());
 }
@@ -26,12 +22,13 @@ class MddWatchApp extends StatelessWidget {
     return MaterialApp(
       title: 'MDD Watch',
       theme: ThemeData(
-        brightness: Brightness.dark, // Часы обычно используют темную тему для экономии
         primarySwatch: Colors.red,
+        brightness: Brightness.dark, // Для часов лучше темная тема (экономия энергии)
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.black,
       ),
-      home: const SplashScreen(),
+      home: const Scaffold(
+        body: Center(child: Text('MDD Watch Initialized')),
+      ),
     );
   }
 }
