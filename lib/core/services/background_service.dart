@@ -97,11 +97,11 @@ void onStart(ServiceInstance service) async {
   final fallDetector = getIt<FallDetectionService>();
   final watchRepository = getIt<WatchRepository>();
   final battery = Battery();
-
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final deviceId = watchRepository.getDeviceId();
 
   // 2. Запуск BLE Сервера (реклама устройства)
-  await bleServer.startServer();
+  await bleServer.startServer(deviceId);
 
   // 3. Запуск мониторинга падения
   // Здесь можно передать чувствительность из настроек
@@ -109,7 +109,7 @@ void onStart(ServiceInstance service) async {
   fallDetector.startMonitoring();
 
   // 4. Держим процессор включенным (WakeLock)
-  WakelockPlus.enable();
+  // WakelockPlus.enable();
 
   print("Background Service: Started");
 

@@ -11,7 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  mdd_ble:
+    path: ./plugins/mdd_ble
   cupertino_icons: ^1.0.8
   flutter_bloc: ^9.1.1
   equatable: ^2.0.7

@@ -52,13 +52,13 @@ class _AlarmScreenState extends State<AlarmScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.warning_amber_rounded, size: 80, color: Colors.white),
-            const SizedBox(height: 20),
-            const Text(
-              "FALL DETECTED",
-              style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
+            // const Icon(Icons.warning_amber_rounded, size: 80, color: Colors.white),
+            // const SizedBox(height: 20),
+            // const Text(
+            //   "FALL DETECTED",
+            //   style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+            // ),
+            // const SizedBox(height: 10),
             const Text(
               "Sending alert in",
               style: TextStyle(color: Colors.white70, fontSize: 16),

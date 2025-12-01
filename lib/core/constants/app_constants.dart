@@ -1,6 +1,6 @@
 class AppConstants {
   // TODO: Замените на реальный адрес вашего API
-  static const String baseUrl = 'https://your-api-server.com';
+  static const String baseUrl = 'http://192.168.1.6:8000';
 
   // --- BLE UUIDs ---
   // Основной сервис

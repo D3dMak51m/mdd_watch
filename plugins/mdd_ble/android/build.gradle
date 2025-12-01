@@ -1,0 +1,52 @@
+group = 'com.mdd.watch.ble'
+version = '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // AGP 8.0+ требует Java 17
+        classpath 'com.android.tools.build:gradle:8.0.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0"
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    namespace "com.mdd.watch.ble"
+    compileSdk 36
+
+    defaultConfig {
+        minSdkVersion 26
+    }
+
+    // --- ДОБАВИТЬ ЭТОТ БЛОК ---
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+    // ---------------------------
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.0"
+}

@@ -1,4 +1,4 @@
-package com.mdd.watch
+package com.mdd.watch.ble // <--- ВАЖНО: Пакет должен быть именно таким
 
 import android.bluetooth.*
 import android.bluetooth.le.AdvertiseCallback
@@ -79,6 +79,11 @@ class BleServerManager(private val context: Context, private val onEvent: (Strin
 
     private fun startAdvertising() {
         val advertiser = bluetoothAdapter.bluetoothLeAdvertiser
+        if (advertiser == null) {
+            Log.e("BleServer", "BLE Advertising not supported on this device")
+            return
+        }
+
         val settings = AdvertiseSettings.Builder()
             .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
             .setConnectable(true)
@@ -87,7 +92,7 @@ class BleServerManager(private val context: Context, private val onEvent: (Strin
             .build()
 
         val data = AdvertiseData.Builder()
-            .setIncludeDeviceName(true) // Важно для обнаружения по имени
+            .setIncludeDeviceName(true)
             .addServiceUuid(ParcelUuid(SERVICE_UUID))
             .build()
 
@@ -96,7 +101,7 @@ class BleServerManager(private val context: Context, private val onEvent: (Strin
     }
 
     fun stopServer() {
-        bluetoothAdapter.bluetoothLeAdvertiser.stopAdvertising(advertiseCallback)
+        bluetoothAdapter.bluetoothLeAdvertiser?.stopAdvertising(advertiseCallback)
         gattServer?.close()
         Log.d("BleServer", "Server stopped")
     }
@@ -149,18 +154,14 @@ class BleServerManager(private val context: Context, private val onEvent: (Strin
         ) {
             super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value)
 
-            // Обязательно отправляем ответ, иначе клиент (телефон) отвалится по таймауту
             if (responseNeeded) {
                 gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
             }
 
-            // Обработка полученных данных
             if (characteristic.uuid == ACK_CHAR_UUID) {
-                // Пришел ACK (0x01 - успех, 0x00 - ошибка)
                 val success = value.isNotEmpty() && value[0].toInt() == 1
                 onEvent("ackReceived", mapOf("success" to success))
             } else if (characteristic.uuid == CONFIG_CHAR_UUID) {
-                // Пришел конфиг [sensitivity, timeout]
                 if (value.size >= 2) {
                     val sensitivity = value[0].toInt()
                     val timeout = value[1].toInt()
@@ -178,7 +179,6 @@ class BleServerManager(private val context: Context, private val onEvent: (Strin
             offset: Int,
             value: ByteArray
         ) {
-            // Обработка подписки на уведомления (CCCD)
             if (responseNeeded) {
                 gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value)
             }

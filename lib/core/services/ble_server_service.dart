@@ -9,23 +9,27 @@ class BleServerService {
   static const EventChannel _eventChannel = EventChannel('com.mdd.watch/ble_events');
 
   final StreamController<Map<String, dynamic>> _bleEventsController = StreamController.broadcast();
+
   Stream<Map<String, dynamic>> get bleEvents => _bleEventsController.stream;
 
   BleServerService() {
-    _eventChannel.receiveBroadcastStream().listen((event) {
-      if (event is Map) {
-        final Map<String, dynamic> castedEvent = Map<String, dynamic>.from(event);
-        _bleEventsController.add(castedEvent);
-      }
-    }, onError: (error) {
-      print("Error receiving BLE event: $error");
-    });
+    _eventChannel.receiveBroadcastStream().listen(
+      (event) {
+        if (event is Map) {
+          final Map<String, dynamic> castedEvent = Map<String, dynamic>.from(event);
+          _bleEventsController.add(castedEvent);
+        }
+      },
+      onError: (error) {
+        print("Error receiving BLE event: $error");
+      },
+    );
   }
 
   /// Запуск сервера и рекламы (Advertising)
-  Future<void> startServer() async {
+  Future<void> startServer(String deviceName) async {
     try {
-      await _methodChannel.invokeMethod('startServer');
+      await _methodChannel.invokeMethod('startServer', {'name': deviceName});
     } on PlatformException catch (e) {
       print("Failed to start BLE Server: '${e.message}'.");
     }
