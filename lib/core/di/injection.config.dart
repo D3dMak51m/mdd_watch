@@ -43,7 +43,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i277.WatchRepository(gh<_i460.SharedPreferences>()),
     );
     gh.factory<_i882.HomeCubit>(
-      () => _i882.HomeCubit(gh<_i277.WatchRepository>()),
+      () => _i882.HomeCubit(
+        gh<_i277.WatchRepository>(),
+        gh<_i216.BleServerService>(),
+      ),
     );
     return this;
   }
