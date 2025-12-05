@@ -21,4 +21,6 @@ class AppConstants {
   static const String isRegisteredKey = 'is_registered';
   static const String fallSensitivityKey = 'fall_sensitivity';
   static const String sosTimeoutKey = 'sos_timeout';
+
+  static const String settingsBoxName = 'settings_box';
 }

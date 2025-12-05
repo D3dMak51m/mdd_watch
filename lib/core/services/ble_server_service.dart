@@ -12,12 +12,21 @@ class BleServerService {
 
   Stream<Map<String, dynamic>> get bleEvents => _bleEventsController.stream;
 
+  final StreamController<bool> _connectionStateController = StreamController.broadcast();
+
+  Stream<bool> get isConnectedStream => _connectionStateController.stream;
+
   BleServerService() {
     _eventChannel.receiveBroadcastStream().listen(
       (event) {
         if (event is Map) {
           final Map<String, dynamic> castedEvent = Map<String, dynamic>.from(event);
           _bleEventsController.add(castedEvent);
+          // Обрабатываем статус подключения из натива
+          if (castedEvent['type'] == 'connectionState') {
+            final state = castedEvent['data']['state'];
+            _connectionStateController.add(state == 'connected');
+          }
         }
       },
       onError: (error) {

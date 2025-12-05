@@ -25,6 +25,9 @@ class BleServerManager(private val context: Context, private val onEvent: (Strin
 
     // ИЗМЕНЕНИЕ: Добавлен параметр deviceName
     fun startServer(deviceName: String) {
+        // Сначала останавливаем всё, чтобы избежать ошибки "Already Started"
+        stopServer()
+
         if (!bluetoothAdapter.isEnabled) {
             Log.e("BleServer", "Bluetooth is disabled")
             return
@@ -53,18 +56,18 @@ class BleServerManager(private val context: Context, private val onEvent: (Strin
         sosChar.addDescriptor(clientConfigDesc)
         service.addCharacteristic(sosChar)
 
-        // 4. Характеристика ACK
+// 4. Характеристика ACK (Write)
         val ackChar = BluetoothGattCharacteristic(
             ACK_CHAR_UUID,
-            BluetoothGattCharacteristic.PROPERTY_WRITE or BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE,
+            BluetoothGattCharacteristic.PROPERTY_WRITE, // Убрали WRITE_NO_RESPONSE
             BluetoothGattCharacteristic.PERMISSION_WRITE
         )
         service.addCharacteristic(ackChar)
 
-        // 5. Характеристика Config
+// 5. Характеристика Config (Write)
         val configChar = BluetoothGattCharacteristic(
             CONFIG_CHAR_UUID,
-            BluetoothGattCharacteristic.PROPERTY_WRITE or BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE,
+            BluetoothGattCharacteristic.PROPERTY_WRITE, // Убрали WRITE_NO_RESPONSE
             BluetoothGattCharacteristic.PERMISSION_WRITE
         )
         service.addCharacteristic(configChar)
@@ -99,8 +102,18 @@ class BleServerManager(private val context: Context, private val onEvent: (Strin
     }
 
     fun stopServer() {
-        bluetoothAdapter.bluetoothLeAdvertiser?.stopAdvertising(advertiseCallback)
-        gattServer?.close()
+        try {
+            bluetoothAdapter.bluetoothLeAdvertiser?.stopAdvertising(advertiseCallback)
+        } catch (e: Exception) {
+            Log.e("BleServer", "Stop advertising error: ${e.message}")
+        }
+
+        try {
+            gattServer?.close()
+            gattServer = null // Важно занулить
+        } catch (e: Exception) {
+            Log.e("BleServer", "Stop server error: ${e.message}")
+        }
         Log.d("BleServer", "Server stopped")
     }
 

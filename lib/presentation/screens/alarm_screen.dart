@@ -27,6 +27,12 @@ class _AlarmScreenState extends State<AlarmScreen> {
         if (_seconds <= 0) {
           // Таймер истек, экран можно закрыть или показать "Sent"
           // Navigator.pop(context);
+          if (mounted) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("SOS Sent! Waiting for help...")),
+            );
+          }
         }
       }
     });
